@@ -9,11 +9,17 @@ import numpy as np
 import traceback
 import requests
 import logging
-import pyaudio
 import torch
 import json
 import os
 import re
+
+# Import PyAudio with graceful error handling
+from ..pyaudio_helper import pyaudio, PYAUDIO_AVAILABLE, get_pyaudio_constants
+
+# Check if PyAudio is available
+if not PYAUDIO_AVAILABLE:
+    logging.warning("PyAudio is not installed. Streaming features will be disabled.")
 
 class CoquiEngine(BaseEngine):
 

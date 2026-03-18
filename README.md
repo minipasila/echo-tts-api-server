@@ -36,7 +36,34 @@ You can keep track of all changes on [release page](https://github.com/minipasil
 - CUDA-capable GPU with at least 8GB VRAM
 - FFmpeg (for audio processing)
 
-### Simple Installation
+### Quick Installation (Recommended)
+
+Use the platform-specific installation script for your operating system:
+
+**Linux:**
+```bash
+chmod +x install_linux.sh
+./install_linux.sh
+```
+
+**macOS:**
+```bash
+chmod +x install_macos.sh
+./install_macos.sh
+```
+
+**Windows:**
+```cmd
+install_windows.bat
+```
+
+These scripts will automatically install all system dependencies and Python packages.
+
+### Manual Installation
+
+If you prefer to install manually, follow the platform-specific instructions below.
+
+#### Simple Installation (Linux/macOS with system deps already installed)
 
 ```bash
 pip install -r requirements.txt
@@ -44,7 +71,9 @@ pip install -r requirements.txt
 
 This will install all necessary dependencies, including PyTorch and Echo TTS dependencies.
 
-### Windows
+**Note:** On Linux, you must first install PortAudio development headers (see Linux section below).
+
+### Windows (Manual)
 
 ```bash
 python -m venv venv
@@ -53,17 +82,48 @@ pip install -r requirements.txt
 pip install torch>=2.9.1 torchaudio>=2.9.1 --index-url https://download.pytorch.org/whl/cu121
 ```
 
-### Linux
+### Linux (Manual)
 
+**Ubuntu/Debian:**
 ```bash
 sudo apt install -y python3-dev python3-venv portaudio19-dev ffmpeg
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+pip install torch>=2.9.1 torchaudio>=2.9.1 --index-url https://download.pytorch.org/whl/cu121
+```
+
+**Fedora/RHEL/CentOS:**
+```bash
+sudo dnf install -y python3-devel python3-venv portaudio-devel alsa-lib-devel ffmpeg
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+pip install torch>=2.9.1 torchaudio>=2.9.1 --index-url https://download.pytorch.org/whl/cu121
+```
+
+**Arch Linux:**
+```bash
+sudo pacman -S portaudio python ffmpeg
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 pip install torch>=2.9.1 torchaudio>=2.9.1 --index-url https://download.pytorch.org/whl/cu121
 ```
 
-### Manual Installation
+### macOS (Manual)
+
+```bash
+brew install portaudio ffmpeg
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+pip install torch>=2.9.1 torchaudio>=2.9.1
+```
+
+**Note:** On macOS, PyTorch will use MPS (Metal Performance Shaders) for GPU acceleration instead of CUDA.
+
+### Clone and Install (Manual)
 
 ```bash
 # Clone REPO
@@ -71,12 +131,119 @@ git clone https://github.com/minipasila/echo-tts-api-server
 cd echo-tts-api-server
 # Create virtual env
 python -m venv venv
-venv/scripts/activate  # or source venv/bin/activate on Linux
+venv/scripts/activate  # or source venv/bin/activate on Linux/macOS
 # Install deps
 pip install -r requirements.txt
 # Launch server
 python -m xtts_api_server
 ```
+
+## Troubleshooting
+
+### PyAudio Installation Issues
+
+PyAudio is required for streaming audio features. If you encounter build errors during installation, follow these platform-specific solutions.
+
+#### Common Error: `portaudio.h: No such file or directory`
+
+This error occurs when PyAudio tries to compile from source but the PortAudio development headers are missing.
+
+#### Linux (Ubuntu/Debian)
+
+**Solution 1: Install system dependencies (Recommended)**
+```bash
+sudo apt-get update
+sudo apt-get install -y python3-dev portaudio19-dev libportaudio2 libasound2-dev
+pip install -r requirements.txt
+```
+
+**Solution 2: Force pre-built wheels**
+```bash
+pip install --only-binary :all: PyAudio==0.2.14
+```
+
+**Solution 3: Use conda**
+```bash
+conda install -c conda-forge pyaudio
+pip install -r requirements.txt --no-deps  # Skip PyAudio
+```
+
+#### Linux (Fedora/RHEL/CentOS)
+```bash
+sudo dnf install -y python3-devel portaudio-devel alsa-lib-devel
+pip install -r requirements.txt
+```
+
+#### Linux (Arch Linux)
+```bash
+sudo pacman -S portaudio python
+pip install -r requirements.txt
+```
+
+#### macOS
+```bash
+brew install portaudio
+pip install -r requirements.txt
+```
+
+#### Windows
+Windows has pre-built wheels available, so no system dependencies are needed:
+```bash
+pip install -r requirements.txt
+```
+
+If you still encounter issues, try:
+```bash
+pip install --only-binary :all: PyAudio==0.2.14
+```
+
+#### Docker
+The Dockerfile already includes all necessary dependencies. If you're building the image and encounter PyAudio errors, ensure you're using the provided Dockerfile:
+```bash
+cd docker
+docker-compose build
+```
+
+#### Alternative: Disable Streaming Features
+
+If you don't need streaming audio features, you can modify the code to make PyAudio optional. See the code comments in [`xtts_api_server/RealtimeTTS/`](xtts_api_server/RealtimeTTS/) for more details.
+
+#### Verification
+
+To verify PyAudio is installed correctly:
+```python
+python -c "import pyaudio; print('PyAudio version:', pyaudio.__version__)"
+```
+
+If this command succeeds, PyAudio is properly installed.
+
+#### Additional Resources
+
+- [PyAudio Documentation](http://people.csail.mit.edu/hubert/pyaudio/)
+- [PortAudio Official Site](http://www.portaudio.com/)
+- [PyAudio GitHub Issues](https://github.com/intel/pyaudio/issues)
+
+### Other Common Issues
+
+#### CUDA Out of Memory
+If you encounter CUDA out of memory errors:
+- Reduce the `sequence_length` parameter in TTS settings
+- Use the `--lowvram` flag (not recommended for Echo TTS)
+- Close other GPU-intensive applications
+
+#### Model Download Failures
+If model downloads fail:
+- Check your internet connection
+- Ensure you have sufficient disk space (~6GB)
+- Try running the server again (models will resume download)
+- Check firewall/proxy settings
+
+#### Audio Quality Issues
+For poor audio quality:
+- Ensure speaker audio is clean and 7-10 seconds long
+- Use WAV format for speaker samples
+- Adjust TTS settings (temperature, speed, etc.)
+- Try different speaker samples
 
 ## Starting Server
 

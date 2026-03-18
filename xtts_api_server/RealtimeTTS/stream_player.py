@@ -4,11 +4,17 @@ Stream management
 
 from pydub import AudioSegment
 import threading
-import pyaudio
 import logging
 import queue
 import time
 import io
+
+# Import PyAudio with graceful error handling
+from .pyaudio_helper import pyaudio, PYAUDIO_AVAILABLE, check_pyaudio
+
+# Check if PyAudio is available
+if not PYAUDIO_AVAILABLE:
+    logging.warning("PyAudio is not installed. Streaming features will be disabled.")
 
 
 class AudioConfiguration:
