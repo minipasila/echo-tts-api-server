@@ -147,9 +147,28 @@ class EchoTTSWrapper:
             self.fish_ae = load_fish_ae_from_hf()
             self.pca_state = load_pca_state_from_hf()
             
-            # Move to device
-            self.model = self.model.to(self.device)
-            self.fish_ae = self.fish_ae.to(self.device)
+            # Move to device safely
+            # load_model_from_hf often handles device placement automatically
+            try:
+                # Check if model is already on the correct device or if it's a meta tensor
+                current_device = next(self.model.parameters()).device
+                if current_device.type != 'meta' and str(current_device) != str(self.device):
+                    logger.info(f"Moving model from {current_device} to {self.device}...")
+                    self.model = self.model.to(self.device)
+                else:
+                    logger.info(f"Model already on {current_device}, skipping .to()")
+            except Exception as e:
+                logger.warning(f"Could not move model to {self.device}: {e}")
+
+            try:
+                current_ae_device = next(self.fish_ae.parameters()).device
+                if current_ae_device.type != 'meta' and str(current_ae_device) != str(self.device):
+                    logger.info(f"Moving Fish AE from {current_ae_device} to {self.device}...")
+                    self.fish_ae = self.fish_ae.to(self.device)
+                else:
+                    logger.info(f"Fish AE already on {current_ae_device}, skipping .to()")
+            except Exception as e:
+                logger.warning(f"Could not move Fish AE to {self.device}: {e}")
             
             logger.info("Echo TTS model loaded successfully!")
             logger.info(f"Model device: {self.device}")
