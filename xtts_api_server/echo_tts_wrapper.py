@@ -150,9 +150,12 @@ class EchoTTSWrapper:
             # Move to device safely
             # load_model_from_hf often handles device placement automatically
             try:
-                # Check if model is already on the correct device or if it's a meta tensor
+                # Check if model is already on a GPU or if it's a meta tensor
                 current_device = next(self.model.parameters()).device
-                if current_device.type != 'meta' and str(current_device) != str(self.device):
+                is_gpu = current_device.type == 'cuda'
+                target_is_gpu = 'cuda' in str(self.device)
+                
+                if current_device.type != 'meta' and not (is_gpu and target_is_gpu):
                     logger.info(f"Moving model from {current_device} to {self.device}...")
                     self.model = self.model.to(self.device)
                 else:
@@ -162,7 +165,9 @@ class EchoTTSWrapper:
 
             try:
                 current_ae_device = next(self.fish_ae.parameters()).device
-                if current_ae_device.type != 'meta' and str(current_ae_device) != str(self.device):
+                is_ae_gpu = current_ae_device.type == 'cuda'
+                
+                if current_ae_device.type != 'meta' and not (is_ae_gpu and target_is_gpu):
                     logger.info(f"Moving Fish AE from {current_ae_device} to {self.device}...")
                     self.fish_ae = self.fish_ae.to(self.device)
                 else:
