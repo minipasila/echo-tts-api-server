@@ -277,7 +277,7 @@ python -m xtts_api_server
 ## Support
 
 - **Echo TTS Issues:** [GitHub Issues](https://github.com/jordandare/echo-tts/issues)
-- **Server Issues:** [GitHub Issues](https://github.com/daswer123/xtts-api-server/issues)
+- **Server Issues:** [GitHub Issues](https://github.com/minipasila/echo-tts-api-server/issues)
 - **Documentation:** See [`plans/echo-tts-migration-plan.md`](plans/echo-tts-migration-plan.md)
 
 ## Credits

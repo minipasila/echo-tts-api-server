@@ -5,8 +5,8 @@ REM
 REM This script is intended for use on Windows systems.
 REM report any issues or bugs on the GitHub repository.
 REM
-REM GitHub: https://github.com/minipasila/xtts-api-server
-REM Issues: https://github.com/minipasila/xtts-api-server/issues
+REM GitHub: https://github.com/minipasila/echo-tts-api-server
+REM Issues: https://github.com/minipasila/echo-tts-api-server/issues
 title XTTS Launcher
 setlocal
 
@@ -313,15 +313,15 @@ if "%GPU_CHOICE%"=="1" (
 
 
 :install_xtts_final
-REM Clone the xtts-api-server repository for voice examples
-echo %blue_bg%[%time%]%reset% %blue_fg_strong%[INFO]%reset% Cloning xtts-api-server repository...
-git clone https://github.com/minipasila/xtts-api-server.git
-cd /d "%~dp0xtts-api-server"
+REM Clone the echo-tts-api-server repository for voice examples
+echo %blue_bg%[%time%]%reset% %blue_fg_strong%[INFO]%reset% Cloning echo-tts-api-server repository...
+git clone https://github.com/minipasila/echo-tts-api-server.git
+cd /d "%~dp0echo-tts-api-server"
 
 REM Install pip requirements
 echo %blue_bg%[%time%]%reset% %cyan_fg_strong%[xtts]%reset% %blue_fg_strong%[INFO]%reset% Installing pip requirements in conda enviroment: %cyan_fg_strong%xtts%reset%
 pip install -r requirements.txt
-pip install xtts-api-server
+pip install echo-tts-api-server
 pip install pydub
 pip install stream2sentence
 
@@ -333,10 +333,10 @@ mkdir "%~dp0xtts\speakers"
 mkdir "%~dp0xtts\output"
 
 echo %blue_bg%[%time%]%reset% %blue_fg_strong%[INFO]%reset% Adding voice examples to speakers directory...
-xcopy "%~dp0xtts-api-server\example\*" "%~dp0xtts\speakers\" /y /e
+xcopy "%~dp0echo-tts-api-server\example\*" "%~dp0xtts\speakers\" /y /e
 
-echo %blue_bg%[%time%]%reset% %blue_fg_strong%[INFO]%reset% Removing the xtts-api-server directory...
-rmdir /s /q "%~dp0xtts-api-server"
+echo %blue_bg%[%time%]%reset% %blue_fg_strong%[INFO]%reset% Removing the echo-tts-api-server directory...
+rmdir /s /q "%~dp0echo-tts-api-server"
 echo %blue_bg%[%time%]%reset% %blue_fg_strong%[INFO]%reset% %green_fg_strong%XTTS installed successfully%reset%
 pause
 goto :home
@@ -416,7 +416,7 @@ if not exist "%~dp0xtts" (
 )
 echo %blue_bg%[%time%]%reset% %blue_fg_strong%[INFO]%reset% Updating XTTS...
 call conda activate xtts
-pip install --upgrade xtts-api-server
+pip install --upgrade echo-tts-api-server
 call conda deactivate
 echo %blue_bg%[%time%]%reset% %blue_fg_strong%[INFO]%reset% %green_fg_strong%XTTS updated successfully.%reset%
 pause

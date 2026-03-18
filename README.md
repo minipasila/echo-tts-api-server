@@ -21,7 +21,7 @@ Echo TTS is a 2.4B parameter diffusion model that:
 
 ## Changelog
 
-You can keep track of all changes on [release page](https://github.com/minipasila/xtts-api-server/releases)
+You can keep track of all changes on [release page](https://github.com/minipasila/echo-tts-api-server/releases)
 
 ## TODO
 - [x] Migrate from XTTS to Echo TTS
@@ -67,8 +67,8 @@ pip install torch>=2.9.1 torchaudio>=2.9.1 --index-url https://download.pytorch.
 
 ```bash
 # Clone REPO
-git clone https://github.com/minipasila/xtts-api-server
-cd xtts-api-server
+git clone https://github.com/minipasila/echo-tts-api-server
+cd echo-tts-api-server
 # Create virtual env
 python -m venv venv
 venv/scripts/activate  # or source venv/bin/activate on Linux
